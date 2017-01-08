@@ -104,7 +104,7 @@
 
                         </div>
 
-                        <div class="panel-body feed ">
+                        <div class="panel-body  ">
 
                             <ul id="Matches"></ul>
 
@@ -120,7 +120,7 @@
                             <div class="panel-heading">
                                 <h3 class="panel-title"><i class="fa fa-rss"></i> Bets</h3>
                             </div>
-                            <div class="panel-body feed">
+                            <div class="panel-body ">
 
                                 <ul id="Bets"></ul>
 
@@ -280,36 +280,75 @@
 
 
 <script>
-        var qery2=@Request.QueryString["event"];
+    var qery2=@Request.QueryString["event"];
+    var match;
+    var idItem;
+
 
         $(function () {
             var chat = $.connection.notificationMatchHub;
-            chat.client.setValuesMatches = function (encodedMsg) {
-
-                $('#Matches').empty();
-                for (var i = 0; i < encodedMsg.length; i++) {
-
-                    if(encodedMsg[i].Event_ID==qery2){
-                        $('#Matches').append(' <li><a class="" href="?sport=@Request.QueryString["sport"]&event='+qery2+'&match=' + encodedMsg[i].Id + '"> <i class="fa fa-tasks"></i>' + encodedMsg[i].Name + '- Type -' + encodedMsg[i].Type + '</br> - Start -' + encodedMsg[i].StartDate + ' </a></li>');
-                    }
-                }
-
-            };
 
             chat.client.returnFullTableMatches = function(message) {
 
                 for (var i = 0; i < message.length; i++) {
+                    match=(' <li><a id="'+message[i].Id+'" class="" href="?sport=@Request.QueryString["sport"]&event='+qery2+'&match=' + message[i].Id + '"> <i class="fa fa-tasks"></i> ' + message[i].Name + '- Type -' + message[i].Type + '</br> - Start -' + message[i].StartDate + ' UTC </a></li>');
+                    if(message[i].Type=="Live")
+                    {
+                        idItem=message[i].Id;
+                    }
+                    else
+                    {
+                        idItem=null;
+                    }
+
                     if(message[i].Event_ID==qery2)
                     {
 
 
-                        $('#Matches').append(' <li><a class="" href="?sport=@Request.QueryString["sport"]&event='+qery2+'&match=' + message[i].Id + '"> <i class="fa fa-tasks"></i> ' + message[i].Name + '- Type -' + message[i].Type + '</br> - Start -' + message[i].StartDate + ' </a></li>');
+
+                        $('#Matches').append(match);
+
+
                     }
+                    else
+                    {
+                        $('#Matches').append(match);
+
+                    }
+                    var p = $('a#'+idItem).css("color", "#7CFC00");
 
                 }
 
             };
 
+            chat.client.setValuesMatches = function (encodedMsg) {
+                $('#Matches').empty();
+
+                for (var i = 0; i < encodedMsg.length; i++) {
+                    match=(' <li><a id="'+encodedMsg[i].Id+'" class="" href="?sport=@Request.QueryString["sport"]&event='+qery2+'&match=' + encodedMsg[i].Id + '"> <i class="fa fa-tasks"></i>' + encodedMsg[i].Name + '- Type -' + encodedMsg[i].Type + '</br> - Start -' + encodedMsg[i].StartDate + ' UTC </a></li>');
+
+                    if(encodedMsg[i].Event_ID==qery2)
+                    {
+
+                        if(message[i].Type=="Live")
+                        {
+                            idItem=message[i].Id;
+                        }
+                        else
+                        {
+                            idItem=null;
+                        }
+
+                        $('#Matches').append(match);
+                        var p = $('a#'+idItem).css("color", "#7CFC00");
+
+
+
+                    }
+
+                }
+
+            };
 
             $.connection.hub.start().done(function () {
 
