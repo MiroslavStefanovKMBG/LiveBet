@@ -22,7 +22,7 @@ namespace Livebet
             timer.TimerStart();
             Database.SetInitializer(new SportSeeder());
 
-            //Database.SetInitializer(new DropCreateDatabaseIfModelChanges<MatchDBContext>());
+            //Database.SetInitializer(new DropCreateDatabaseIfModelChaes<MatchDBContext>());
             AreaRegistration.RegisterAllAreas();
             RouteConfig.RegisterRoutes(RouteTable.Routes);
 
