@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Bet</title>
     <script src="/Scripts/jquery-1.11.3.min.js"></script>
-   
+
 
     <link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="/font-awesome/css/font-awesome.min.css" />
@@ -20,7 +20,7 @@
     <script type="text/javascript" src="http://www.prepbootstrap.com/Content/js/gridData.js"></script>
     <script src="~/Scripts/jquery.signalR-2.2.1.js"></script>
     <script src="/signalr/hubs"></script>
-    
+
 </head>
 
 <body>
@@ -130,9 +130,14 @@
                 </div>
 
 
+
+
             </div>
 
+
         </div>
+
+
 
 
 
@@ -149,45 +154,45 @@
 
     var sport;
 
-        $(function () {
-            var chat = $.connection.notificationSportHub;
-            chat.client.setValuesSports = function (encodedMsg) {
-                $('#Sports').empty();
-                for (var i = 0; i < encodedMsg.length; i++) {
+    $(function () {
+        var chat = $.connection.notificationSportHub;
+        chat.client.setValuesSports = function (encodedMsg) {
+            $('#Sports').empty();
+            for (var i = 0; i < encodedMsg.length; i++) {
 
-                     sport= $('#Sports').append('<li id='+encodedMsg[i].Id+'"><a href="?sport='+encodedMsg[i].Id+'&event=0&match=0"><i class="fa fa-user"></i> '+encodedMsg[i].Name+'</a></li>');
-                     $('#Sports').append(sport);
+                sport= $('#Sports').append('<li id='+encodedMsg[i].Id+'"><a href="?sport='+encodedMsg[i].Id+'&event=0&match=0"><i class="fa fa-user"></i> '+encodedMsg[i].Name+'</a></li>');
+                $('#Sports').append(sport);
 
-                }
+            }
 
-            };
+        };
 
-            chat.client.returnFullTableSports = function(message) {
+        chat.client.returnFullTableSports = function(message) {
 
-                for (var i = 0; i < message.length; i++) {
+            for (var i = 0; i < message.length; i++) {
 
-                     sport=('<li id='+message[i].Id+'><a href="?sport='+message[i].Id+'&event=0&match=0"><i class="fa fa-user"></i> '+message[i].Name+'</a></li>');
+                sport=('<li id='+message[i].Id+'><a href="?sport='+message[i].Id+'&event=0&match=0"><i class="fa fa-user"></i> '+message[i].Name+'</a></li>');
 
-                    $('#Sports').append(sport);
-
-                    
-
-                }
-
-            };
+                $('#Sports').append(sport);
 
 
 
+            }
+
+        };
 
 
-            $.connection.hub.start().done(function () {
-
-                chat.server.registerNotificationSports();
 
 
-            });
+
+        $.connection.hub.start().done(function () {
+
+            chat.server.registerNotificationSports();
+
 
         });
+
+    });
 
 
 
@@ -217,7 +222,7 @@
                             idItem=encodedMsg[i].Id;
                         }
 
-                        
+
                         $('#UlEvent').append(event);
 
                         var p = $('a#'+idItem).css("color", "#7CFC00");
@@ -231,7 +236,7 @@
             chat.client.returnSportEv = function(message) {
 
                 for (var i = 0; i < message.length; i++) {
-                    
+
                     event= (' <li><a id="'+message[i].Id+'" href="?sport='+qery1+'&event='+message[i].Id+'"><i class="fa fa-tasks"></i> '+message[i].Name+'<span class="badge"></span></a> </li>');
 
                     if(qery1==message[i].Sport_ID){
@@ -275,8 +280,6 @@
 
 
 <script>
-
-
         var qery2=@Request.QueryString["event"];
 
         $(function () {
@@ -294,6 +297,7 @@
             };
 
             chat.client.returnFullTableMatches = function(message) {
+
                 for (var i = 0; i < message.length; i++) {
                     if(message[i].Event_ID==qery2)
                     {
@@ -303,9 +307,9 @@
                     }
 
                 }
-               
+
             };
-        
+
 
             $.connection.hub.start().done(function () {
 
@@ -315,23 +319,6 @@
 
             });
         });
-
-
-
-</script>
-<script>
-                $(document).ready(function (){
-
-                    for (var i = 0; i < listMaches.length; i++)
-                    {
-                        $('#ulTest').append(listMaches[i].Id);
-
-                    }
-
-
-
-                });
-
 
 
 
@@ -359,7 +346,7 @@
                         {
                             idItem=encodedMsg[i].Id;
                         }
-                     
+
                         $('#Bets').append(bet);
                         var p = $('a#'+idItem).css("color", "#7CFC00");
 
@@ -379,7 +366,7 @@
                             idItem=message[i].Id;
                         }
 
-                     
+
                         $('#Bets').append(bet);
 
                         var p = $('a#'+idItem).css("color", "#7CFC00");
@@ -421,7 +408,7 @@
                     odd=('<tr><td>'+encodedMsg[i].Name+'</td><td>'+encodedMsg[i].Value+'</td><td>'+encodedMsg[i].SpecialBetValue+'</td></tr>');
                     if(encodedMsg[i].Bet_ID==qery4){
 
-                       
+
                         $('#ValueTable').append(odd);
 
                     }
@@ -437,7 +424,7 @@
                     if(message[i].Bet_ID==qery4){
 
 
-                       
+
                         $('#ValueTable').append(odd);
 
 
