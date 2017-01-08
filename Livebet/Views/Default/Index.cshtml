@@ -1,0 +1,488 @@
+﻿
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Bet</title>
+    <script src="/Scripts/jquery-1.11.3.min.js"></script>
+   
+
+    <link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/font-awesome/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="/css/local.css" />
+    <script type="text/javascript" src="/bootstrap/js/bootstrap.min.js"></script>
+    <!-- you need to include the shieldui css and js assets in order for the charts to work -->
+    <link rel="stylesheet" type="text/css" href="http://www.shieldui.com/shared/components/latest/css/light-bootstrap/all.min.css" />
+    <link id="gridcss" rel="stylesheet" type="text/css" href="http://www.shieldui.com/shared/components/latest/css/dark-bootstrap/all.min.css" />
+    <script type="text/javascript" src="http://www.shieldui.com/shared/components/latest/js/shieldui-all.min.js"></script>
+    <script type="text/javascript" src="http://www.prepbootstrap.com/Content/js/gridData.js"></script>
+    <script src="~/Scripts/jquery.signalR-2.2.1.js"></script>
+    <script src="/signalr/hubs"></script>
+    
+</head>
+
+<body>
+
+    <div id="wrapper">
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Live Bet</a>
+            </div>
+
+
+
+            <li class="class="dropdown user-dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> Chose Event<b class="caret"></b></a>
+
+                <ul id="UlEvent" class="dropdown-menu"></ul>
+            </li>
+
+
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+
+
+                <ul id="Sports" class="nav navbar-nav side-nav">
+
+                    @*<img src="~/images/3591.jpg" width="220" />*@
+
+
+                </ul>
+
+
+
+        </nav>
+
+        <div class="row">
+            <div class="col-md-12">
+
+            </div>
+
+
+        </div>
+        <div id="page-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+
+                    <div class="alert alert-dismissable alert-warning">
+                        <button data-dismiss="alert" class="close" type="button">&times;</button>
+                        Welcome to theLive Bet! Feel free to view free all sport events  .
+                        <br />
+                        This site provides you a real time live bet experience – you can see up to date information for different sports, sport events, choose from many bet categories and observe odds in real time.
+                        Good luck and happy bets!
+                    </div>
+                </div>
+            
+
+        </div>
+
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <td>Odd Type</td>
+                        <th>Value</th>
+                        <th>SpetialValue</th>
+                    </tr>
+                </thead>
+                <tbody id="ValueTable"></tbody>
+            </table>
+        <div class="row ">
+
+            <div class="col-md-6">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><i class="fa fa-rss"></i> Match</h3>
+
+
+
+                    </div>
+
+                    <div class="panel-body feed ">
+
+                        <ul id="Matches"></ul>
+
+                    </div>
+
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><i class="fa fa-rss"></i> Bets</h3>
+                        </div>
+                        <div class="panel-body feed">
+
+                            <ul id="Bets"></ul>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+        </div>
+
+            <input type="text"  value="test"/>
+            <ul id="ulTest"></ul>
+           
+    </div>
+
+    
+
+
+   
+</body>
+
+
+
+</html>
+
+
+
+<script>
+    //---------------------------------- Sport-----------------------------------------------
+
+    var sport;
+
+        $(function () {
+            var chat = $.connection.notificationSportHub;
+            chat.client.setValuesSports = function (encodedMsg) {
+                $('#Sports').empty();
+                for (var i = 0; i < encodedMsg.length; i++) {
+
+                     sport= $('#Sports').append('<li id='+encodedMsg[i].Id+'"><a href="?sport='+encodedMsg[i].Id+'&event=0&match=0"><i class="fa fa-user"></i> '+encodedMsg[i].Name+'</a></li>');
+                     $('#Sports').append(sport);
+
+                }
+
+            };
+
+            chat.client.returnFullTableSports = function(message) {
+
+                for (var i = 0; i < message.length; i++) {
+
+                     sport=('<li id='+message[i].Id+'><a href="?sport='+message[i].Id+'&event=0&match=0"><i class="fa fa-user"></i> '+message[i].Name+'</a></li>');
+
+                    $('#Sports').append(sport);
+
+                    
+
+                }
+
+            };
+
+
+
+
+
+            $.connection.hub.start().done(function () {
+
+                chat.server.registerNotificationSports();
+
+
+            });
+
+        });
+
+
+
+
+</script>
+
+@*---------------------------------------------  Events ------------------------------------*@
+<script>
+
+
+    var qery1=@Request.QueryString["sport"];
+    var event;
+
+
+        $(function () {
+            var chat = $.connection.notificationEventHub;
+            chat.client.setValuesEvents = function (encodedMsg) {
+                $('#UlEvent').empty();
+
+                for (var i = 0; i < encodedMsg.length; i++) {
+                    event=  (' <li><a id="'+encodedMsg[i].Id+'" href="?sport='+qery1+'&event='+encodedMsg[i].Id+'"><i class="fa fa-tasks"></i> '+encodedMsg[i].Name+'<span class="badge"></span></a> </li>');
+                    if(qery1==encodedMsg[i].Sport_ID ){
+
+                        var idItem;
+                        if(encodedMsg[i].IsLive==true)
+                        {
+                            idItem=encodedMsg[i].Id;
+                        }
+
+                        
+                        $('#UlEvent').append(event);
+
+                        var p = $('a#'+idItem).css("color", "#7CFC00");
+
+
+
+                    }
+                }
+            };
+
+            chat.client.returnSportEv = function(message) {
+
+                for (var i = 0; i < message.length; i++) {
+                    
+                    event= (' <li><a id="'+message[i].Id+'" href="?sport='+qery1+'&event='+message[i].Id+'"><i class="fa fa-tasks"></i> '+message[i].Name+'<span class="badge"></span></a> </li>');
+
+                    if(qery1==message[i].Sport_ID){
+
+
+                        var idItem;
+                        if(message[i].IsLive==true)
+                        {
+                            idItem=message[i].Id;
+                        }
+
+
+
+                        $('#UlEvent').append(event);
+
+
+                        var p = $('a#'+idItem).css("color", "#7CFC00");
+
+                    }
+
+                }
+
+            };
+
+
+
+
+            $.connection.hub.start().done(function () {
+
+                chat.server.registerNotificationEvent();
+
+
+
+            });
+        });
+
+
+</script>
+@*---------------------------------------------  Matches ------------------------------------*@
+
+
+
+<script>
+
+    var listMaches;
+
+
+
+        var qery2=@Request.QueryString["event"];
+
+        $(function () {
+            var chat = $.connection.notificationMatchHub;
+            chat.client.setValuesMatches = function (encodedMsg) {
+
+                $('#Matches').empty();
+                for (var i = 0; i < encodedMsg.length; i++) {
+
+                    if(encodedMsg[i].Event_ID==qery2){
+                        $('#Matches').append(' <li><a class="" href="?sport=@Request.QueryString["sport"]&event='+qery2+'&match=' + encodedMsg[i].Id + '"> <i class="fa fa-tasks"></i>' + encodedMsg[i].Name + '- Type -' + encodedMsg[i].Type + '</br> - Start -' + encodedMsg[i].StartDate + ' </a></li>');
+                    }
+                }
+
+            };
+
+            chat.client.returnFullTableMatches = function(message) {
+               listMaches=message;
+                for (var i = 0; i < message.length; i++) {
+                    if(message[i].Event_ID==qery2)
+                    {
+
+
+                        $('#Matches').append(' <li><a class="" href="?sport=@Request.QueryString["sport"]&event='+qery2+'&match=' + message[i].Id + '"> <i class="fa fa-tasks"></i> ' + message[i].Name + '- Type -' + message[i].Type + '</br> - Start -' + message[i].StartDate + ' </a></li>');
+                    }
+
+                }
+                for (var i = 0; i < listMaches.length; i++)
+                {
+                    $('#ulTest').append('<li>'+listMaches[i].Event_ID+'</li>');
+
+                }
+            };
+            //---------------------------------------test load list--------------------------------------------
+          
+               
+
+            
+            //-----------------------------------------------------------------------------------
+
+            $.connection.hub.start().done(function () {
+
+
+                chat.server.registerNotificationMatches();
+
+
+            });
+        });
+
+
+
+</script>
+<script>
+                $(document).ready(function (){
+
+                    for (var i = 0; i < listMaches.length; i++)
+                    {
+                        $('#ulTest').append(listMaches[i].Id);
+
+                    }
+
+
+
+                });
+
+
+
+
+</script>
+@*---------------------------------------------  Bets ------------------------------------*@
+
+
+
+<script>
+
+    var qery3=@Request.QueryString["match"];
+    var bet;
+
+        $(function () {
+            var chat = $.connection.notificationBetHub;
+            chat.client.setValuesBets = function (encodedMsg) {
+
+                $('#Bets').empty();
+                for (var i = 0; i < encodedMsg.length; i++) {
+                    bet=(' <li><a id='+encodedMsg[i].Id+' href="?sport=@Request.QueryString["sport"]&event=@Request.QueryString["event"]&match='+qery3+'&bet='+encodedMsg[i].Id+'"><i class="fa fa-tasks"></i> '+encodedMsg[i].Name+'</a></li>');
+
+                    if(encodedMsg[i].Match_ID==qery3){
+                        var idItem;
+                        if(encodedMsg[i].IsLive==true)
+                        {
+                            idItem=encodedMsg[i].Id;
+                        }
+                     
+                        $('#Bets').append(bet);
+                        var p = $('a#'+idItem).css("color", "#7CFC00");
+
+                    }
+                }
+
+            };
+
+            chat.client.returnFullTableBets = function(message) {
+
+                for (var i = 0; i < message.length; i++) {
+                    bet=(' <li><a id='+message[i].Id+' href="?sport=@Request.QueryString["sport"]&event=@Request.QueryString["event"]&match='+qery3+'&bet='+message[i].Id+'"><i class="fa fa-tasks"></i> '+message[i].Name+'</a></li>');
+                    if(message[i].Match_ID==qery3){
+                        var idItem;
+                        if(message[i].IsLive==true)
+                        {
+                            idItem=message[i].Id;
+                        }
+
+                     
+                        $('#Bets').append(bet);
+
+                        var p = $('a#'+idItem).css("color", "#7CFC00");
+
+                    }
+                }
+
+            };
+
+
+            $.connection.hub.start().done(function () {
+
+
+                chat.server.registerNotificationBets();
+
+
+            });
+        });
+
+
+
+</script>
+@*---------------------------------------------  Odds ------------------------------------*@
+
+
+
+<script>
+
+    var qery4=@Request.QueryString["bet"];
+    var odd;
+
+        $(function () {
+            var chat = $.connection.notificationOddHub;
+            chat.client.setValuesOdds = function (encodedMsg) {
+
+                $('#ValueTable').empty();
+
+                for (var i = 0; i < encodedMsg.length; i++) {
+                    odd=('<tr><td>'+encodedMsg[i].Name+'</td><td>'+encodedMsg[i].Value+'</td><td>'+encodedMsg[i].SpecialBetValue+'</td></tr>');
+                    if(encodedMsg[i].Bet_ID==qery4){
+
+                       
+                        $('#ValueTable').append(odd);
+
+                    }
+                }
+
+
+            };
+
+            chat.client.returnFullTableOdds = function test(message) {
+
+                for (var i = 0; i < message.length; i++) {
+                    odd=('<tr><td>'+message[i].Name+'</td><td>'+message[i].Value+'</td><td>'+message[i].SpecialBetValue+'</td></tr>');
+                    if(message[i].Bet_ID==qery4){
+
+
+                       
+                        $('#ValueTable').append(odd);
+
+
+
+                    }
+
+                }
+
+            };
+
+
+            $.connection.hub.start().done(function () {
+
+
+                chat.server.registerNotificationOdds();
+
+
+            });
+        });
+
+
+
+</script>
+
+
+
+
+
