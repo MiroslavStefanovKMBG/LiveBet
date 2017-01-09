@@ -1,4 +1,14 @@
-﻿
+﻿@model IEnumerable<object>
+
+@{
+    List<Livebet.Models.Sport> listSport = Model.ToList()[0] as List<Livebet.Models.Sport>;
+    List<Livebet.Models.Event> listEvents = Model.ToList()[1] as List<Livebet.Models.Event>;
+    List<Livebet.Models.Match> listMatch = Model.ToList()[2] as List<Livebet.Models.Match>;
+    List<Livebet.Models.Bet> listBet = Model.ToList()[3] as List<Livebet.Models.Bet>;
+    List<Livebet.Models.Odd> listOdd = Model.ToList()[4] as List<Livebet.Models.Odd>;
+
+
+}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -37,22 +47,48 @@
                 <a class="navbar-brand" href="#">Live Bet</a>
             </div>
 
+            @*<input type="text" value="@Request.QueryString["event"]" />*@
 
 
-            <li class="class=" dropdown user-dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> Chose Event<b class="caret"></b></a>
+            @*------------------------------------------ Table Events---------------------------------------------------*@
+            <li class="dropdown user-dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> Chose aEvent<b class="caret"></b></a>
 
-                <ul id="UlEvent" class="dropdown-menu"></ul>
+                <ul id="UlEvent" class="dropdown-menu">
+                    @foreach (var item in from c in listEvents where c.Sport_ID.ToString() == Request.QueryString["sport"] select c)
+                    {
+                        int matchesCount = listMatch.FindAll(match => match.Event_ID == item.Id).Count();
+                        if (matchesCount != 0)
+                        {
+
+                            <li>
+                                <a id="@item.Id" href="?sport=@Request.QueryString["sport"]&event=@item.Id"><i class="fa fa-tasks"></i> @item.Name<span class="badge">@matchesCount</span></a>
+
+
+
+
+                            </li>
+                        }
+
+
+                    }
+
+                  
+
+                </ul>
             </li>
 
-
+            @*--------------------------------------------- table Sports---------------------------------------------*@
             <div class="collapse navbar-collapse navbar-ex1-collapse">
 
 
-                <ul id="Sports" class="nav navbar-nav side-nav">
+                <ul id="active" class="nav navbar-nav side-nav">
 
-                    @*<img src="~/images/3591.jpg" width="220" />*@
-
+                    @foreach (var item in listSport)
+                    {
+                        <li id="@item.Id"><a href="?sport=@item.Id&event=0&match=0"><i class="fa fa-user"></i> @item.Name</a></li>
+                    }
+                    <img src="~/images/3591.jpg" width="220" />
 
                 </ul>
 
@@ -64,83 +100,221 @@
             <div class="col-md-12">
 
             </div>
+            @{
+                var sportH = (from c in listSport where c.Id.ToString() == Request.QueryString["sport"] select c.Name);
+                var eventH = (from c in listEvents where c.Id.ToString() == Request.QueryString["event"] select c.Name);
+                var MatchH = (from c in listMatch where c.Id.ToString() == Request.QueryString["match"] select c.Name);
+                var BetH = (from c in listBet where c.Id.ToString() == Request.QueryString["bet"] select c.Name);
 
+
+
+            }
 
         </div>
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
-
+                    <h1>Live Bet <small>@sportH.SingleOrDefault() @eventH.SingleOrDefault() @MatchH.SingleOrDefault() @BetH.SingleOrDefault()</small></h1>
                     <div class="alert alert-dismissable alert-warning">
                         <button data-dismiss="alert" class="close" type="button">&times;</button>
                         Welcome to theLive Bet! Feel free to view free all sport events  .
                         <br />
-                        This site provides you a real time live bet experience – you can see up to date information for different sports, sport events, choose from many bet categories and observe odds in real time.
-                        Good luck and happy bets!
+                        This theme uses the <a href="https://www.shieldui.com">ShieldUI</a> JavaScript library for the
+                        additional data visualization and presentation functionality illustrated here.
                     </div>
                 </div>
-
-
             </div>
 
-            <table class="table table-condensed">
-                <thead>
-                    <tr>
-                        <td>Odd Type</td>
-                        <th>Value</th>
-                        <th>SpetialValue</th>
-                    </tr>
-                </thead>
-                <tbody id="ValueTable"></tbody>
-            </table>
-            <div class="row ">
 
-                <div class="col-md-6">
+
+            @*--------------------------------------------Table Matches-----------------------*@
+
+
+            @*<div class="col-md-6">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><i class="fa fa-rss"></i> Matches @sportH.SingleOrDefault() @eventH.SingleOrDefault() @MatchH.SingleOrDefault()</h3>*@
+
+                        @*---------------------------*@
+
+                        <div class="col-md-6">
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title"><i class="fa fa-rss"></i> Matches</h3>
+                                </div>
+                                <div class="panel-body feed">
+
+                                    <ul id="Matches">
+
+                                        @foreach (var item in from c in listMatch where c.Event_ID.ToString() == Request.QueryString["event"] select c)
+                                        {
+
+                                            <li><a href="?sport=@Request.QueryString["sport"]&event=@Request.QueryString["event"]&match=@item.Id"><i class="fa fa-tasks"></i> @item.Name</a></li>
+                                        }
+
+
+                                    </ul>
+
+                                </div>
+
+                            </div>
+                        </div>
+                        @*---------------------------------------*@
+
+
+
+
+            @*----------------------------------------------------------------  table Bets-------*@
+
+            <div class="col-md-3">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><i class="fa fa-rss"></i> Bets</h3>
+                    </div>
+                    <div class="panel-body feed">
+
+                        <ul id="Bets">
+
+                            @foreach (var item in from c in listBet where c.Match_ID.ToString() == Request.QueryString["match"] select c)
+                            {
+
+                                <li><a href="?sport=@Request.QueryString["sport"]&event=@Request.QueryString["event"]&match=@Request.QueryString["match"]&bet=@item.Id"><i class="fa fa-tasks"></i> @item.Name</a></li>
+                            }
+
+
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <div class="row">
+                <div class="col-md-3">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
-                            <h3 class="panel-title"><i class="fa fa-rss"></i> Match</h3>
-
-
+                            <h3 class="panel-title"><i class="fa fa-rss"></i> Odds</h3>
 
                         </div>
-
-                        <div class="panel-body  ">
-
-                            <ul id="Matches"></ul>
-
-                        </div>
-
-                    </div>
-                </div>
+                        <div class="panel-body">
 
 
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="panel panel-primary">
-                            <div class="panel-heading">
-                                <h3 class="panel-title"><i class="fa fa-rss"></i> Bets</h3>
+                            @*-------------------------------------Table Odds----------------*@
+
+                            @*<table class="table table-condensed">
+                                <thead>
+                                    <tr>
+                                        <td>Odd Type</td>
+                                        <th>Value</th>
+                                        <th>SpetialValue</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ValueTable"></tbody>
+                            </table>
+                            <div class="row ">
+
+                                <div class="col-md-6">
+                                    <div class="panel panel-primary">
+                                        <div class="panel-heading">
+                                            <h3 class="panel-title"><i class="fa fa-rss"></i> Match</h3>*@
+
+
+                                            @foreach (var item in from c in listOdd where c.Bet_ID.ToString() == Request.QueryString["bet"] select c)
+                                            {
+
+                                                <table id="ValueTable" class="table table-condensed">
+                                                    <thead>
+                                                        <tr>
+
+
+                                                            <th>@item.Name</th>
+
+
+
+
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>Value</td>
+                                                            <td>@item.Value</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Spetial Value</td>
+                                                            <td>@item.SpecialBetValue</td>
+                                                        </tr>
+
+                                                    </tbody>
+                                                </table>
+                                            }
+
+
+
+                                            @*-------------------------------------------*@
+
+
+
+                                            @*Carousel---------------------------------*@
+                                            <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+                                                <!-- Indicators -->
+                                                <ol class="carousel-indicators">
+                                                    <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+                                                    <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+                                                    <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+                                                </ol>
+
+                                                <!-- Wrapper for slides -->
+                                                <div class="carousel-inner">
+                                                    <div class="item active">
+                                                        <img src="~/images/60139-O9JKZR-142.jpg" alt="...">
+
+                                                        <div class="carousel-caption">
+                                                            <h3></h3>
+                                                        </div>
+                                                    </div>
+                                                    <div class="item">
+                                                        <img src="~/images/18.jpg" alt="...">
+                                                        <div class="carousel-caption">
+                                                            <h3></h3>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="item">
+                                                        <img src="~/images/american football 2.jpg" alt="...">
+
+                                                        <div class="carousel-caption">
+                                                            <h3></h3>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Controls -->
+                                                <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+                                                    <span class="glyphicon glyphicon-chevron-left"></span>
+                                                </a>
+                                                <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+                                                    <span class="glyphicon glyphicon-chevron-right"></span>
+                                                </a>
+                                            </div> <!-- Carousel -->
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                @*----------------------------------------------------*@
+
                             </div>
-                            <div class="panel-body ">
-
-                                <ul id="Bets"></ul>
-
-                            </div>
                         </div>
-                    </div>
-                </div>
+    </div>
+
+    @*<script src="~/Scripts/jquery-1.6.4.js"></script>*@
+    <script src="~/Scripts/jquery.signalR-2.2.1.js"></script>
+    <script src="~/signalr/hubs"></script>
 
 
-
-
-            </div>
-
-
-        </div>
-
-
-
-
-
+   
 </body>
 
 
@@ -152,37 +326,20 @@
 <script>
     //---------------------------------- Sport-----------------------------------------------
 
-    var sport;
 
     $(function () {
         var chat = $.connection.notificationSportHub;
         chat.client.setValuesSports = function (encodedMsg) {
-            $('#Sports').empty();
+            $('#active').empty();
             for (var i = 0; i < encodedMsg.length; i++) {
 
-                sport= $('#Sports').append('<li id='+encodedMsg[i].Id+'"><a href="?sport='+encodedMsg[i].Id+'&event=0&match=0"><i class="fa fa-user"></i> '+encodedMsg[i].Name+'</a></li>');
-                $('#Sports').append(sport);
+                $('#active').append = $('#active').append('<li id=' + encodedMsg[i].Id + '"><a href="?sport=' + encodedMsg[i].Id + '&event=0&match=0"><i class="fa fa-user"></i> ' + encodedMsg[i].Name + '</a></li>');
 
             }
 
         };
 
-        chat.client.returnFullTableSports = function(message) {
-
-            for (var i = 0; i < message.length; i++) {
-
-                sport=('<li id='+message[i].Id+'><a href="?sport='+message[i].Id+'&event=0&match=0"><i class="fa fa-user"></i> '+message[i].Name+'</a></li>');
-
-                $('#Sports').append(sport);
-
-
-
-            }
-
-        };
-
-
-
+     
 
 
         $.connection.hub.start().done(function () {
@@ -233,37 +390,7 @@
                 }
             };
 
-            chat.client.returnSportEv = function(message) {
-
-                for (var i = 0; i < message.length; i++) {
-
-                    event= (' <li><a id="'+message[i].Id+'" href="?sport='+qery1+'&event='+message[i].Id+'"><i class="fa fa-tasks"></i> '+message[i].Name+'<span class="badge"></span></a> </li>');
-
-                    if(qery1==message[i].Sport_ID){
-
-
-                        var idItem;
-                        if(message[i].IsLive==true)
-                        {
-                            idItem=message[i].Id;
-                        }
-
-
-
-                        $('#UlEvent').append(event);
-
-
-                        var p = $('a#'+idItem).css("color", "#7CFC00");
-
-                    }
-
-                }
-
-            };
-
-
-
-
+         
             $.connection.hub.start().done(function () {
 
                 chat.server.registerNotificationEvent();
@@ -282,68 +409,22 @@
 <script>
     var qery2=@Request.QueryString["event"];
     var match;
-    var idItem;
-
 
         $(function () {
             var chat = $.connection.notificationMatchHub;
-
-            chat.client.returnFullTableMatches = function(message) {
-
-                for (var i = 0; i < message.length; i++) {
-                    match=(' <li><a id="'+message[i].Id+'" class="" href="?sport=@Request.QueryString["sport"]&event='+qery2+'&match=' + message[i].Id + '"> <i class="fa fa-tasks"></i> ' + message[i].Name + '- Type -' + message[i].Type + '</br> - Start -' + message[i].StartDate + ' UTC </a></li>');
-                    if(message[i].Type=="Live")
-                    {
-                        idItem=message[i].Id;
-                    }
-                    else
-                    {
-                        idItem=null;
-                    }
-
-                    if(message[i].Event_ID==qery2)
-                    {
-
-
-
-                        $('#Matches').append(match);
-
-
-                    }
-                   
-                    var p = $('a#'+idItem).css("color", "#7CFC00");
-
-                }
-
-            };
-
             chat.client.setValuesMatches = function (encodedMsg) {
+
                 $('#Matches').empty();
-
                 for (var i = 0; i < encodedMsg.length; i++) {
-                    match=(' <li><a id="'+encodedMsg[i].Id+'" class="" href="?sport=@Request.QueryString["sport"]&event='+qery2+'&match=' + encodedMsg[i].Id + '"> <i class="fa fa-tasks"></i>' + encodedMsg[i].Name + '- Type -' + encodedMsg[i].Type + '</br> - Start -' + encodedMsg[i].StartDate + ' UTC </a></li>');
 
-                    if(encodedMsg[i].Event_ID==qery2)
-                    {
-
-                        if(message[i].Type=="Live")
-                        {
-                            idItem=message[i].Id;
-                        }
-                        else
-                        {
-                            idItem=null;
-                        }
-
-                        var p = $('a#'+idItem).css("color", "#7CFC00");
-
-
-
+                    if(encodedMsg[i].Event_ID==qery2){
+                        $('#Matches').append(' <li><a class="" href="?sport=@Request.QueryString["sport"]&event='+qery2+'&match=' + encodedMsg[i].Id + '"> <i class="fa fa-tasks"></i>' + encodedMsg[i].Name + '- Type -' + encodedMsg[i].Type + '</br> - Start -' + encodedMsg[i].StartDate + ' </a></li>');
                     }
-
                 }
 
             };
+
+         
 
             $.connection.hub.start().done(function () {
 
@@ -389,28 +470,7 @@
 
             };
 
-            chat.client.returnFullTableBets = function(message) {
-
-                for (var i = 0; i < message.length; i++) {
-                    bet=(' <li><a id='+message[i].Id+' href="?sport=@Request.QueryString["sport"]&event=@Request.QueryString["event"]&match='+qery3+'&bet='+message[i].Id+'"><i class="fa fa-tasks"></i> '+message[i].Name+'</a></li>');
-                    if(message[i].Match_ID==qery3){
-                        var idItem;
-                        if(message[i].IsLive==true)
-                        {
-                            idItem=message[i].Id;
-                        }
-
-
-                        $('#Bets').append(bet);
-
-                        var p = $('a#'+idItem).css("color", "#7CFC00");
-
-                    }
-                }
-
-            };
-
-
+           
             $.connection.hub.start().done(function () {
 
 
@@ -451,23 +511,7 @@
 
             };
 
-            chat.client.returnFullTableOdds = function test(message) {
-
-                for (var i = 0; i < message.length; i++) {
-                    odd=('<tr><td>'+message[i].Name+'</td><td>'+message[i].Value+'</td><td>'+message[i].SpecialBetValue+'</td></tr>');
-                    if(message[i].Bet_ID==qery4){
-
-
-
-                        $('#ValueTable').append(odd);
-
-
-
-                    }
-
-                }
-
-            };
+         
 
 
             $.connection.hub.start().done(function () {
