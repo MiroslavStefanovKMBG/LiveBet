@@ -25,8 +25,8 @@ namespace Livebet.Models
             XmlDocument doc = new XmlDocument();
             try
             {
-                //doc.Load(@"http://vitalbet.net/sportxml"); // NWebFile
-                doc.Load(@"C:\Users\momo\Desktop\Livebet5.01.2017-9.00h-working\Livebet5.01.2017-19.00h-working-FinallToSend\Livebet\Livebet\XMLFile2.xml");//Locall File
+                doc.Load(@"http://vitalbet.net/sportxml"); // NWebFile
+                //doc.Load(@"C:\Users\momo\Desktop\Livebet5.01.2017-9.00h-working\Livebet5.01.2017-19.00h-working-FinallToSend\Livebet\Livebet\XMLFile2.xml");//Locall File
             }
             catch
             {

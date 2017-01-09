@@ -149,7 +149,7 @@
                                         @foreach (var item in from c in listMatch where c.Event_ID.ToString() == Request.QueryString["event"] select c)
                                         {
 
-                                            <li><a href="?sport=@Request.QueryString["sport"]&event=@Request.QueryString["event"]&match=@item.Id"><i class="fa fa-tasks"></i> @item.Name</a></li>
+                                            <li><a href="?sport=@Request.QueryString["sport"]&event=@Request.QueryString["event"]&match=@item.Id"><i class="fa fa-tasks"></i> @item.Name -- @item.StartDate</a></li>
                                         }
 
 
