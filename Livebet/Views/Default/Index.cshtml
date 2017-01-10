@@ -372,11 +372,13 @@
                 for (var i = 0; i < encodedMsg.length; i++) {
                     event=  (' <li><a id="'+encodedMsg[i].Id+'" href="?sport='+qery1+'&event='+encodedMsg[i].Id+'"><i class="fa fa-tasks"></i> '+encodedMsg[i].Name+'<span class="badge"></span></a> </li>');
                     if(qery1==encodedMsg[i].Sport_ID ){
-
+                        
                         var idItem;
                         if(encodedMsg[i].IsLive==true)
                         {
                             idItem=encodedMsg[i].Id;
+
+
                         }
 
 

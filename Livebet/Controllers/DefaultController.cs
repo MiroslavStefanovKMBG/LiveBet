@@ -25,10 +25,11 @@ namespace Livebet.Controllers
 
                     //NewFilter newFilter = new NewFilter();
                     //newFilter.DataImport();
+                    NotificationEvents NE = new NotificationEvents();
 
 
                     MultyList.Add(db.Sports.ToList());
-                    MultyList.Add(db.Events.ToList());
+                    MultyList.Add(NE.GetSportEv());
                     MultyList.Add(db.Matches.ToList());
                     MultyList.Add(db.Bets.ToList());
                     MultyList.Add(db.Odds.ToList());
