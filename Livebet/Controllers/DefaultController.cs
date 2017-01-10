@@ -29,7 +29,7 @@ namespace Livebet.Controllers
 
 
                     MultyList.Add(db.Sports.ToList());
-                    MultyList.Add(NE.GetSportEv());
+                    MultyList.Add(db.Events.ToList());
                     MultyList.Add(db.Matches.ToList());
                     MultyList.Add(db.Bets.ToList());
                     MultyList.Add(db.Odds.ToList());
