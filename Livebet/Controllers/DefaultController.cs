@@ -13,28 +13,37 @@ namespace Livebet.Controllers
     {
         public ActionResult Index()
         {
-
-            using (MatchDBContext db = new MatchDBContext())
-            {
-                //db.Database.Delete();
-
-                //NewFilter newFilter = new NewFilter();
-                //newFilter.DataImport();
-
-                List<object> MultyList = new List<object>();
-                MultyList.Add(db.Sports.ToList());
-                MultyList.Add(db.Events.ToList());
-                MultyList.Add(db.Matches.ToList());
-                MultyList.Add(db.Bets.ToList());
-                MultyList.Add(db.Odds.ToList());
+            List<object> MultyList = new List<object>();
 
 
+            
+                using (MatchDBContext db = new MatchDBContext())
+                {
+                try
+                {
+                    //db.Database.Delete();
+
+                    //NewFilter newFilter = new NewFilter();
+                    //newFilter.DataImport();
 
 
-                return View(MultyList);
+                    MultyList.Add(db.Sports.ToList());
+                    MultyList.Add(db.Events.ToList());
+                    MultyList.Add(db.Matches.ToList());
+                    MultyList.Add(db.Bets.ToList());
+                    MultyList.Add(db.Odds.ToList());
 
 
-            }
+                }catch { }
+
+               
+            return View(MultyList);
+
+
+                }
+
+
+           
 
 
 
