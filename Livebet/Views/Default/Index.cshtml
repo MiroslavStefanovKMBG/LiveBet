@@ -44,7 +44,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">Live Bet</a>
+                <a class="navbar-brand" href="~/Views/Default/Index.cshtml">Live Bet</a>
             </div>
 
             @*<input type="text" value="@Request.QueryString["event"]" />*@
@@ -146,8 +146,11 @@
                                 <div class="panel-body ">
 
                                     <ul id="Matches">
+                                        @if (Request.QueryString["event"] == null || Request.QueryString["event"] == "0")
+                                        {
                                         <li>Matches start next 2 hours</li>
-                                        @foreach (var item in from c in listMatch where Request.QueryString["event"]=="0" where c.StartDate>=DateTime.UtcNow&& c.StartDate <= DateTime.UtcNow.AddHours(2) select c)
+                                        }
+                                        @foreach (var item in from c in listMatch where Request.QueryString["event"]==null|| Request.QueryString["event"] == "0" where c.StartDate>=DateTime.UtcNow&& c.StartDate <= DateTime.UtcNow.AddHours(2) select c)
                                         {
                                             <li><a href="?sport=@Request.QueryString["sport"]&event=@Request.QueryString["event"]&match=@item.Id"><i class="fa fa-tasks"></i> @item.Name -- @item.StartDate</a></li>
                                         }
