@@ -114,13 +114,14 @@
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1>Live Bet <small>@sportH.SingleOrDefault() @eventH.SingleOrDefault() @MatchH.SingleOrDefault() @BetH.SingleOrDefault()</small></h1>
+                    <h1>Live Bet <small>@sportH.SingleOrDefault()<a href="?event=@Request.QueryString["event"]"> @eventH.SingleOrDefault() </a> @MatchH.SingleOrDefault() @BetH.SingleOrDefault()</small></h1>
+
                     <div class="alert alert-dismissable alert-warning">
                         <button data-dismiss="alert" class="close" type="button">&times;</button>
                         Welcome to theLive Bet! Feel free to view free all sport events  .
                         <br />
-                        This theme uses the <a href="https://www.shieldui.com">ShieldUI</a> JavaScript library for the
-                        additional data visualization and presentation functionality illustrated here.
+                        This site provides you a real time live bet experience – you can see up to date information for different sports, sport events, choose from many bet categories and observe odds in real time.
+                        Good luck and happy bets!
                     </div>
                 </div>
             </div>
@@ -142,14 +143,19 @@
                                 <div class="panel-heading">
                                     <h3 class="panel-title"><i class="fa fa-rss"></i> Matches</h3>
                                 </div>
-                                <div class="panel-body feed">
+                                <div class="panel-body ">
 
                                     <ul id="Matches">
+                                        <li>Matches start next 2 hours</li>
+                                        @foreach (var item in from c in listMatch where Request.QueryString["event"]=="0" where c.StartDate>=DateTime.UtcNow&& c.StartDate <= DateTime.UtcNow.AddHours(2) select c)
+                                        {
+                                            <li><a href="?sport=@Request.QueryString["sport"]&event=@Request.QueryString["event"]&match=@item.Id"><i class="fa fa-tasks"></i> @item.Name -- @item.StartDate</a></li>
+                                        }
 
                                         @foreach (var item in from c in listMatch where c.Event_ID.ToString() == Request.QueryString["event"] select c)
                                         {
-
-                                            <li><a href="?sport=@Request.QueryString["sport"]&event=@Request.QueryString["event"]&match=@item.Id"><i class="fa fa-tasks"></i> @item.Name -- @item.StartDate</a></li>
+                                            
+                                            <li><a href="?sport=@Request.QueryString["sport"]&event=@Request.QueryString["event"]&match=@item.Id"><i class="fa fa-tasks"></i> @item.Name -- @item.StartDate UTC</a></li>
                                         }
 
 
@@ -171,7 +177,7 @@
                     <div class="panel-heading">
                         <h3 class="panel-title"><i class="fa fa-rss"></i> Bets</h3>
                     </div>
-                    <div class="panel-body feed">
+                    <div class="panel-body " >
 
                         <ul id="Bets">
 
